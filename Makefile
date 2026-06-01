@@ -23,7 +23,7 @@ PRIORITY  = $(CONFIG_QUICKAPP_PRIORITY)
 STACKSIZE = $(CONFIG_QUICKAPP_STACKSIZE)
 # Export 执行文件, 需要保持 PROGNAME 与 MAINSRC 顺序匹配.
 ifeq ($(CONFIG_QUICKAPP_VAPP),y)
-#MAINSRC  += src/ajs_window.cpp
+# Use prebuilt vapp library (source not available in open source release)
 PROGNAME += vapp
 endif
 
@@ -32,8 +32,10 @@ ifeq ($(CONFIG_QUICKAPP_VAPP_XMS),y)
 PROGNAME += vappxms
 endif
 
+ifeq ($(CONFIG_QUICKAPP_AIOTJSC),y)
 #MAINSRC  += src/ajs_compile.cpp
-PROGNAME += aiotjsc
+#PROGNAME += aiotjsc
+endif
 
 ifeq ($(CONFIG_QUICKAPP_VAPPTEST),y)
 PROGNAME += vapptest
@@ -53,6 +55,10 @@ ASRCS := $(wildcard $(ASRCS))
 CSRCS := $(wildcard $(CSRCS))
 CXXSRCS := $(wildcard $(CXXSRCS))
 MAINSRC := $(wildcard $(MAINSRC))
+ifeq ($(CONFIG_QUICKAPP_VAPP),y)
+# Add vapp sources after wildcard (wildcard fails with relative/VPATH paths)
+# Use CURDIR-relative paths to match Application.mk SUFFIX pattern
+endif
 NOEXPORTSRCS = $(ASRCS)$(CSRCS)$(CXXSRCS)$(MAINSRC)
 
 ifneq ($(NOEXPORTSRCS),)
